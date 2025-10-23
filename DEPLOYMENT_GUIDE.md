@@ -76,6 +76,17 @@ nicely with a free PostgreSQL instance if you later decide to persist data. The 
 
 Alternatives include Railway and Fly.io, but Render’s free plan keeps the app alive for quick demos without extra setup.
 
+### Deploying to Railway
+
+If you would rather use [Railway](https://railway.com), follow the same build/start pattern the project already exposes:
+
+1. **Connect the repository.** Create a new project on Railway, choose **Deploy from GitHub**, and pick the branch that contains Agent CRM.
+2. **Reuse the existing scripts.** Set the build command to `pnpm install && pnpm build` and the start command to `pnpm start` in the service’s **Deployments** settings so Railway runs the bundled Express server.
+3. **Mirror the environment.** Add a `PORT` variable (Railway injects the value at runtime) and any other configuration such as `DATABASE_URL` or `VITE_API_BASE_URL` under the **Variables** tab.
+4. **Verify the deployment.** After the pipeline turns green, the deployment card will show an **Active** status. Open the generated Railway domain and confirm both the API and client respond as expected.
+
+Subsequent pushes to the tracked branch will automatically rebuild the service using the commands above, so you can continue iterating locally and rely on Railway for continuous deployment.
+
 ## Static Asset Hosting Only?
 
 If you only need the React client (and plan to host the API elsewhere), run `pnpm build` and deploy the contents of

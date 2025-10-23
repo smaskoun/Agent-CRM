@@ -45,7 +45,7 @@ app.get("/api/pipeline", (_request, response) => {
 });
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
-const distPublicPath = path.resolve(dirname, "..", "..", "dist", "public");
+const distPublicPath = path.resolve(dirname, "public");
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(distPublicPath));
