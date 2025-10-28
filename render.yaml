@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: agent-crm
+    env: node
+    plan: free
+    buildCommand: |
+      corepack enable
+      pnpm install --frozen-lockfile
+      pnpm build
+    startCommand: pnpm start
+    envVars:
+      - key: NODE_VERSION
+        value: 22.11.0
