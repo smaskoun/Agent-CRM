@@ -28,17 +28,19 @@ pnpm install
 pnpm dev
 ```
 
-`pnpm dev` starts the Express server on port **3000** and serves the Vite client in development mode. The API is backed by
-an in-memory data store located in `shared/data.ts`, so you can explore the UI without a database.
+`pnpm dev` starts the Express server on port **3000** and serves the Vite client in development mode. The API persists
+records to a shared JSON database on disk (managed by `shared/data.ts`), so every user sees the same data set even after
+restarts.
 
 ## Environment Variables
 
 Create a `.env` (or `.env.local`) file in the repository root when you are ready to connect to a database or run Drizzle
-migrations:
+migrations. You can also control where the shared JSON database is stored by setting `AGENT_CRM_DB_PATH`:
 
 ```env
 DATABASE_URL=mysql://user:password@host:3306/agent_crm
 PORT=3000
+AGENT_CRM_DB_PATH=./data/agent-crm.json
 ```
 
 The development server only requires `PORT`. `DATABASE_URL` is read by `drizzle-kit` commands.
@@ -94,7 +96,7 @@ If you only need the React client (and plan to host the API elsewhere), run `pnp
 
 ## Next Steps
 
-- Replace the in-memory helpers in `shared/data.ts` with database access.
+- Replace the JSON helpers in `shared/data.ts` with database access.
 - Expand the Drizzle schema and migrations as requirements grow.
 - Add authentication and background jobs as needed.
 
