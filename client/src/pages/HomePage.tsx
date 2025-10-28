@@ -39,7 +39,7 @@ export function HomePage() {
           <MetricCard title="Open deals" value={summary.openDeals.toString()} subtitle="Actively being worked" />
           <MetricCard
             title="Won this month"
-            value={summary.wonDeals.toString()}
+            value={summary.wonDealsThisMonth.toString()}
             subtitle="Closed-won across the team"
           />
           <MetricCard

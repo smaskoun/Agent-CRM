@@ -24,7 +24,7 @@ export interface PipelineStage {
 
 export interface DashboardSummary {
   openDeals: number;
-  wonDeals: number;
+  wonDealsThisMonth: number;
   totalPipelineValue: number;
   newLeadsThisMonth: number;
 }
