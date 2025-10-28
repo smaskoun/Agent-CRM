@@ -84,18 +84,19 @@ correct build/start commands and Node.js version automatically.
 If you prefer to configure the service manually instead of using the blueprint, create a new Web Service on Render and
 reuse the same build (`corepack enable && pnpm install --frozen-lockfile && pnpm build`) and start (`pnpm start`) commands.
 
-Alternatives include Railway and Fly.io, but Render’s free plan keeps the app alive for quick demos without extra setup.
+This repository includes a [`render.yaml`](./render.yaml) blueprint so Render can provision the web service with the
+correct build/start commands and Node.js version automatically.
 
-### Deploying to Railway
+1. Push the repository to GitHub (or another Git provider Render supports).
+2. In Render, choose **New +** → **Blueprint** and point it at the repository.
+3. Accept the defaults – the blueprint installs dependencies with `pnpm`, runs `pnpm build`, and launches the bundled Express server via `pnpm start`.
+4. Render injects the `PORT` variable automatically. Add any other variables you need (for example `AGENT_CRM_DB_PATH` or `DATABASE_URL`) on the service **Environment** tab.
+5. Deploy. Subsequent pushes to the tracked branch will trigger rebuilds using the same commands.
 
-If you would rather use [Railway](https://railway.com), follow the same build/start pattern the project already exposes:
+If you prefer to configure the service manually instead of using the blueprint, create a new Web Service on Render and
+reuse the same build (`corepack enable && pnpm install --frozen-lockfile && pnpm build`) and start (`pnpm start`) commands.
 
-1. **Connect the repository.** Create a new project on Railway, choose **Deploy from GitHub**, and pick the branch that contains Agent CRM.
-2. **Reuse the existing scripts.** Set the build command to `pnpm install && pnpm build` and the start command to `pnpm start` in the service’s **Deployments** settings so Railway runs the bundled Express server.
-3. **Mirror the environment.** Add a `PORT` variable (Railway injects the value at runtime) and any other configuration such as `DATABASE_URL` or `VITE_API_BASE_URL` under the **Variables** tab.
-4. **Verify the deployment.** After the pipeline turns green, the deployment card will show an **Active** status. Open the generated Railway domain and confirm both the API and client respond as expected.
-
-Subsequent pushes to the tracked branch will automatically rebuild the service using the commands above, so you can continue iterating locally and rely on Railway for continuous deployment.
+Render’s free plan keeps the app alive for quick demos without extra setup.
 
 ## Static Asset Hosting Only?
 
