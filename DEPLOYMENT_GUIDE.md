@@ -68,13 +68,21 @@ pnpm start
 ## Free Hosting Recommendation
 
 For hobby deployments, **Render** (https://render.com) offers a free web service tier suitable for Node.js apps and pairs
-nicely with a free PostgreSQL instance if you later decide to persist data. The workflow looks like this:
+nicely with a free PostgreSQL instance if you later decide to persist data.
 
-1. Push the repository to GitHub.
-2. Create a new Web Service on Render, pointing to the repo.
-3. Set the build command to `pnpm install && pnpm build` and the start command to `pnpm start`.
-4. Configure the `PORT` environment variable (Render defaults to providing one for you).
-5. Deploy – Render will build on every push to the selected branch.
+### Deploying to Render with `render.yaml`
+
+This repository includes a [`render.yaml`](./render.yaml) blueprint so Render can provision the web service with the
+correct build/start commands and Node.js version automatically.
+
+1. Push the repository to GitHub (or another Git provider Render supports).
+2. In Render, choose **New +** → **Blueprint** and point it at the repository.
+3. Accept the defaults – the blueprint installs dependencies with `pnpm`, runs `pnpm build`, and launches the bundled Express server via `pnpm start`.
+4. Render injects the `PORT` variable automatically. Add any other variables you need (for example `AGENT_CRM_DB_PATH` or `DATABASE_URL`) on the service **Environment** tab.
+5. Deploy. Subsequent pushes to the tracked branch will trigger rebuilds using the same commands.
+
+If you prefer to configure the service manually instead of using the blueprint, create a new Web Service on Render and
+reuse the same build (`corepack enable && pnpm install --frozen-lockfile && pnpm build`) and start (`pnpm start`) commands.
 
 Alternatives include Railway and Fly.io, but Render’s free plan keeps the app alive for quick demos without extra setup.
 
