@@ -1,5 +1,52 @@
+import fs from "node:fs";
+import path from "node:path";
 import { nanoid } from "nanoid";
 import type { CRMClient, CRMDeal, DashboardSummary, PipelineStage } from "./types";
+
+interface DatabaseSnapshot {
+  clients: CRMClient[];
+  deals: CRMDeal[];
+}
+
+const databaseFilePath = (() => {
+  const override = process.env.AGENT_CRM_DB_PATH;
+  if (override && override.trim().length > 0) {
+    return path.isAbsolute(override) ? override : path.resolve(process.cwd(), override);
+  }
+
+  return path.resolve(process.cwd(), "data", "agent-crm.json");
+})();
+
+function readSnapshotFromDisk(): DatabaseSnapshot | null {
+  if (!fs.existsSync(databaseFilePath)) {
+    return null;
+  }
+
+  try {
+    const raw = fs.readFileSync(databaseFilePath, "utf8");
+    if (!raw) {
+      return null;
+    }
+    const parsed = JSON.parse(raw) as Partial<DatabaseSnapshot>;
+    if (!Array.isArray(parsed.clients) || !Array.isArray(parsed.deals)) {
+      return null;
+    }
+
+    return {
+      clients: parsed.clients as CRMClient[],
+      deals: parsed.deals as CRMDeal[],
+    };
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.warn("[data] Failed to read database snapshot, falling back to defaults", error);
+    return null;
+  }
+}
+
+function writeSnapshotToDisk(snapshot: DatabaseSnapshot): void {
+  fs.mkdirSync(path.dirname(databaseFilePath), { recursive: true });
+  fs.writeFileSync(databaseFilePath, JSON.stringify(snapshot, null, 2), "utf8");
+}
 
 const initialClients: CRMClient[] = [
   {
@@ -55,11 +102,34 @@ const initialDeals: CRMDeal[] = [
   },
 ];
 
-let clients = [...initialClients];
-let deals = [...initialDeals];
+function buildInitialSnapshot(): DatabaseSnapshot {
+  return {
+    clients: [...initialClients],
+    deals: [...initialDeals],
+  };
+}
+
+let snapshot: DatabaseSnapshot = (() => {
+  const fromDisk = readSnapshotFromDisk();
+  if (fromDisk) {
+    return {
+      clients: [...fromDisk.clients],
+      deals: [...fromDisk.deals],
+    };
+  }
+
+  const initialSnapshot = buildInitialSnapshot();
+  writeSnapshotToDisk(initialSnapshot);
+  return initialSnapshot;
+})();
+
+function updateSnapshot(mutator: (state: DatabaseSnapshot) => DatabaseSnapshot): void {
+  snapshot = mutator(snapshot);
+  writeSnapshotToDisk(snapshot);
+}
 
 export function getClients(): CRMClient[] {
-  return clients;
+  return [...snapshot.clients];
 }
 
 export function addClient(input: Omit<CRMClient, "id" | "lastContactedOn" | "stage">): CRMClient {
@@ -69,12 +139,15 @@ export function addClient(input: Omit<CRMClient, "id" | "lastContactedOn" | "sta
     lastContactedOn: new Date().toISOString(),
     ...input,
   };
-  clients = [client, ...clients];
+  updateSnapshot((state) => ({
+    ...state,
+    clients: [client, ...state.clients],
+  }));
   return client;
 }
 
 export function getDeals(): CRMDeal[] {
-  return deals;
+  return [...snapshot.deals];
 }
 
 export function getPipeline(): PipelineStage[] {
@@ -85,7 +158,7 @@ export function getPipeline(): PipelineStage[] {
     Closed: { id: "closed", label: "Closed", deals: [] },
   };
 
-  for (const deal of deals) {
+  for (const deal of snapshot.deals) {
     const stage = stages[deal.stage as keyof typeof stages];
     if (stage) {
       stage.deals.push(deal);
@@ -98,10 +171,10 @@ export function getPipeline(): PipelineStage[] {
 }
 
 export function getDashboardSummary(): DashboardSummary {
-  const openDeals = deals.filter((deal) => deal.status === "open").length;
-  const wonDeals = deals.filter((deal) => deal.status === "won").length;
-  const totalPipelineValue = deals.reduce((sum, deal) => sum + deal.value, 0);
-  const newLeadsThisMonth = clients.filter((client) => {
+  const openDeals = snapshot.deals.filter((deal) => deal.status === "open").length;
+  const wonDeals = snapshot.deals.filter((deal) => deal.status === "won").length;
+  const totalPipelineValue = snapshot.deals.reduce((sum, deal) => sum + deal.value, 0);
+  const newLeadsThisMonth = snapshot.clients.filter((client) => {
     const created = new Date(client.lastContactedOn);
     const now = new Date();
     return created.getMonth() === now.getMonth() && created.getFullYear() === now.getFullYear();
@@ -116,6 +189,7 @@ export function getDashboardSummary(): DashboardSummary {
 }
 
 export function resetData(): void {
-  clients = [...initialClients];
-  deals = [...initialDeals];
+  const initialSnapshot = buildInitialSnapshot();
+  snapshot = initialSnapshot;
+  writeSnapshotToDisk(initialSnapshot);
 }

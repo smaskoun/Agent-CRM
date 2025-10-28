@@ -16,7 +16,8 @@ pnpm dev
 
 - Express serves JSON on `http://localhost:3000/api/*`.
 - Vite proxies the React client to the same origin.
-- Data is stored in-memory via `shared/data.ts` so no database setup is required.
+- Data persists to a shared JSON database managed by `shared/data.ts`, so everyone sees the same records without extra
+  setup.
 
 ## 3. Explore the UI
 
