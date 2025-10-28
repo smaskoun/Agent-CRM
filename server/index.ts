@@ -7,7 +7,7 @@ import {
   getDashboardSummary,
   getDeals,
   getPipeline,
-} from "../../shared/data";
+} from "../shared/data";
 import type { CreateClientRequest } from "@shared/types";
 
 const app = express();

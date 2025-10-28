@@ -9,7 +9,7 @@ and deploy without needing to hunt for missing archives.
 ```
 .
 ├── client/             # Vite + React single page application
-├── server/_core/       # Express entry point exposing JSON endpoints
+├── server/             # Express entry point exposing JSON endpoints
 ├── shared/             # Shared TypeScript types and mock data helpers
 ├── drizzle/            # Drizzle ORM schema (and future migrations)
 ├── package.json        # Workspace scripts & dependencies
