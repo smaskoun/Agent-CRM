@@ -170,21 +170,31 @@ export function getPipeline(): PipelineStage[] {
   return Object.values(stages);
 }
 
+function isSameCalendarMonth(dateString: string, reference: Date): boolean {
+  const parsed = new Date(dateString);
+  if (Number.isNaN(parsed.getTime())) {
+    return false;
+  }
+
+  return parsed.getFullYear() === reference.getFullYear() && parsed.getMonth() === reference.getMonth();
+}
+
 export function getDashboardSummary(): DashboardSummary {
-  const openDeals = snapshot.deals.filter((deal) => deal.status === "open").length;
-  const wonDeals = snapshot.deals.filter((deal) => deal.status === "won").length;
-  const totalPipelineValue = snapshot.deals.reduce((sum, deal) => sum + deal.value, 0);
-  const newLeadsThisMonth = snapshot.clients.filter((client) => {
-    const created = new Date(client.lastContactedOn);
-    const now = new Date();
-    return created.getMonth() === now.getMonth() && created.getFullYear() === now.getFullYear();
-  }).length;
+  const now = new Date();
+  const openDeals = snapshot.deals.filter((deal) => deal.status === "open");
+  const wonDealsThisMonth = snapshot.deals.filter(
+    (deal) => deal.status === "won" && isSameCalendarMonth(deal.updatedAt, now),
+  );
+  const totalPipelineValue = openDeals.reduce((sum, deal) => sum + deal.value, 0);
+  const newLeadsThisMonth = snapshot.clients.filter((client) =>
+    isSameCalendarMonth(client.lastContactedOn, now),
+  );
 
   return {
-    openDeals,
-    wonDeals,
+    openDeals: openDeals.length,
+    wonDealsThisMonth: wonDealsThisMonth.length,
     totalPipelineValue,
-    newLeadsThisMonth,
+    newLeadsThisMonth: newLeadsThisMonth.length,
   };
 }
 
