@@ -84,6 +84,18 @@ correct build/start commands and Node.js version automatically.
 If you prefer to configure the service manually instead of using the blueprint, create a new Web Service on Render and
 reuse the same build (`corepack enable && pnpm install --frozen-lockfile && pnpm build`) and start (`pnpm start`) commands.
 
+This repository includes a [`render.yaml`](./render.yaml) blueprint so Render can provision the web service with the
+correct build/start commands and Node.js version automatically.
+
+1. Push the repository to GitHub (or another Git provider Render supports).
+2. In Render, choose **New +** → **Blueprint** and point it at the repository.
+3. Accept the defaults – the blueprint installs dependencies with `pnpm`, runs `pnpm build`, and launches the bundled Express server via `pnpm start`.
+4. Render injects the `PORT` variable automatically. Add any other variables you need (for example `AGENT_CRM_DB_PATH` or `DATABASE_URL`) on the service **Environment** tab.
+5. Deploy. Subsequent pushes to the tracked branch will trigger rebuilds using the same commands.
+
+If you prefer to configure the service manually instead of using the blueprint, create a new Web Service on Render and
+reuse the same build (`corepack enable && pnpm install --frozen-lockfile && pnpm build`) and start (`pnpm start`) commands.
+
 Render’s free plan keeps the app alive for quick demos without extra setup.
 
 ## Static Asset Hosting Only?
