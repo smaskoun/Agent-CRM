@@ -3,8 +3,10 @@ import type { CSSProperties, ReactNode } from "react";
 import { apiGet } from "../api";
 import { MetricCard } from "../components/MetricCard";
 import type { DashboardSummary } from "@shared/types";
+import { useLocation } from "wouter";
 
 export function HomePage() {
+  const [, setLocation] = useLocation();
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [error, setError] = useState<string | null>(null);
 
