@@ -25,7 +25,7 @@ const sidebarLinkStyle: CSSProperties = {
 };
 
 export function Layout({ navigation, children }: LayoutProps) {
-  const [location, setLocation] = useLocation();
+  const [location] = useLocation();
 
   return (
     <div
@@ -154,7 +154,6 @@ export function Layout({ navigation, children }: LayoutProps) {
           <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
             <button
               type="button"
-              onClick={() => setLocation("/clients")}
               style={{
                 borderRadius: "999px",
                 border: "none",

@@ -93,7 +93,6 @@ export function HomePage() {
         <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
           <button
             type="button"
-            onClick={() => setLocation("/deals")}
             style={{
               borderRadius: "0.85rem",
               border: "1px solid rgba(99, 102, 241, 0.35)",
@@ -107,7 +106,6 @@ export function HomePage() {
           </button>
           <button
             type="button"
-            onClick={() => setLocation("/pipeline")}
             style={{
               borderRadius: "0.85rem",
               border: "none",
@@ -158,10 +156,8 @@ export function HomePage() {
             }}
           >
             <DataCard title="Today's tasks" description="No tasks due today">
-              <p style={{ margin: "0 0 1rem", color: "#64748b" }}>
-                You’re all caught up. Schedule new reminders to keep deals moving.
-              </p>
-              <button type="button" onClick={() => setLocation("/pipeline")} style={secondaryButtonStyle}>
+              <p style={{ margin: "0 0 1rem", color: "#64748b" }}>You’re all caught up. Schedule new reminders to keep deals moving.</p>
+              <button type="button" style={secondaryButtonStyle}>
                 Manage tasks
               </button>
             </DataCard>
@@ -169,7 +165,7 @@ export function HomePage() {
               <p style={{ margin: "0 0 1rem", color: "#64748b" }}>
                 Add new appointments as you confirm them with buyers to see them here.
               </p>
-              <button type="button" onClick={() => setLocation("/pipeline")} style={secondaryButtonStyle}>
+              <button type="button" style={secondaryButtonStyle}>
                 Add showing
               </button>
             </DataCard>
@@ -177,7 +173,7 @@ export function HomePage() {
               <p style={{ margin: "0 0 1rem", color: "#64748b" }}>
                 Celebrate past clients to keep referrals flowing. Log birthdays from the contact profile.
               </p>
-              <button type="button" onClick={() => setLocation("/clients")} style={secondaryButtonStyle}>
+              <button type="button" style={secondaryButtonStyle}>
                 View contacts
               </button>
             </DataCard>
@@ -203,11 +199,16 @@ export function HomePage() {
               </div>
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem" }}>
-              {quickActions.map((action) => (
+              {[
+                "Add contact",
+                "Log activity",
+                "Create deal",
+                "Send email",
+                "Record showing",
+              ].map((action) => (
                 <button
-                  key={action.label}
+                  key={action}
                   type="button"
-                  onClick={() => setLocation(action.href)}
                   style={{
                     borderRadius: "999px",
                     border: "1px solid rgba(99, 102, 241, 0.35)",
@@ -218,7 +219,7 @@ export function HomePage() {
                     cursor: "pointer",
                   }}
                 >
-                  {action.label}
+                  {action}
                 </button>
               ))}
             </div>
@@ -267,11 +268,3 @@ const secondaryButtonStyle: CSSProperties = {
   cursor: "pointer",
   width: "fit-content",
 };
-
-const quickActions: { label: string; href: string }[] = [
-  { label: "Add contact", href: "/clients" },
-  { label: "Log activity", href: "/deals" },
-  { label: "Create deal", href: "/deals" },
-  { label: "Send email", href: "/clients" },
-  { label: "Record showing", href: "/pipeline" },
-];
