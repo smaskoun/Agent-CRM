@@ -1,4 +1,4 @@
-import { Link, Route, Switch } from "wouter";
+import { Route, Switch } from "wouter";
 import { ClientsPage } from "./pages/ClientsPage";
 import { DealsPage } from "./pages/DealsPage";
 import { HomePage } from "./pages/HomePage";
@@ -6,21 +6,15 @@ import { PipelinePage } from "./pages/PipelinePage";
 import { Layout } from "./components/Layout";
 
 const navigation = [
-  { href: "/", label: "Overview" },
-  { href: "/pipeline", label: "Pipeline" },
-  { href: "/clients", label: "Clients" },
-  { href: "/deals", label: "Deals" },
+  { href: "/", label: "Dashboard", icon: "🏠" },
+  { href: "/clients", label: "Contacts", icon: "👥" },
+  { href: "/deals", label: "Deals", icon: "💼" },
+  { href: "/pipeline", label: "Pipeline", icon: "🗂️" },
 ];
 
 export default function App() {
   return (
-    <Layout
-      navigation={navigation.map((item) => (
-        <Link key={item.href} href={item.href}>
-          {item.label}
-        </Link>
-      ))}
-    >
+    <Layout navigation={navigation}>
       <Switch>
         <Route path="/" component={HomePage} />
         <Route path="/pipeline" component={PipelinePage} />

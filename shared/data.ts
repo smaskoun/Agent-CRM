@@ -189,12 +189,32 @@ export function getDashboardSummary(): DashboardSummary {
   const newLeadsThisMonth = snapshot.clients.filter((client) =>
     isSameCalendarMonth(client.lastContactedOn, now),
   );
+  const totalContacts = snapshot.clients.length;
+  const averageDaysInPipeline = (() => {
+    if (openDeals.length === 0) {
+      return 0;
+    }
+
+    const totalDays = openDeals.reduce((sum, deal) => {
+      const updatedAt = new Date(deal.updatedAt);
+      if (Number.isNaN(updatedAt.getTime())) {
+        return sum;
+      }
+
+      const diffMs = Math.max(0, now.getTime() - updatedAt.getTime());
+      return sum + diffMs / (1000 * 60 * 60 * 24);
+    }, 0);
+
+    return Math.max(1, Math.round(totalDays / openDeals.length));
+  })();
 
   return {
+    totalContacts,
     openDeals: openDeals.length,
     wonDealsThisMonth: wonDealsThisMonth.length,
     totalPipelineValue,
     newLeadsThisMonth: newLeadsThisMonth.length,
+    averageDaysInPipeline,
   };
 }
 

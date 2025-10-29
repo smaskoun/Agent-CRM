@@ -23,10 +23,12 @@ export interface PipelineStage {
 }
 
 export interface DashboardSummary {
+  totalContacts: number;
   openDeals: number;
   wonDealsThisMonth: number;
   totalPipelineValue: number;
   newLeadsThisMonth: number;
+  averageDaysInPipeline: number;
 }
 
 export interface CreateClientRequest {
