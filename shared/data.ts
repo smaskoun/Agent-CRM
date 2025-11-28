@@ -160,7 +160,7 @@ export function getPipeline(): PipelineStage[] {
 
   for (const deal of snapshot.deals) {
     const stage = stages[deal.stage as keyof typeof stages];
-    if (stage) {
+    if (stage && typeof stage === "object" && Array.isArray(stage.deals)) {
       stage.deals.push(deal);
     } else {
       stages.Discovery.deals.push(deal);
